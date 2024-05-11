@@ -1,46 +1,46 @@
 import streamlit as st
-import pandas as pd
-import altair as alt
-# https://radcoding.streamlit.app/
+import random
 
-#streamlit community cloud
-@st.cache_data
-def get_UN_data():
-    AWS_BUCKET_URL = "https://streamlit-demo-data.s3-us-west-2.amazonaws.com"
-    df = pd.read_csv(AWS_BUCKET_URL + "/agri.csv.gz")
-    return df.set_index("Region")
 
-try:
-    df = get_UN_data()
-    countries = st.multiselect(
-        "Choose countries", list(df.index), ["India", "United States of America"]
-    )
-    if not countries:
-        st.error("Please select at least one country.")
-    else:
-        data = df.loc[countries]
-        data /= 1000000.0
-        st.write("### Gross Agricultural Production ($B)", data.sort_index())
+def reset(maximum_number):
+    st.session_state.counter = 0
+    st.session_state.random_number = random.randint(1, maximum_number)
 
-        data = data.T.reset_index()
-        data = pd.melt(data, id_vars=["index"]).rename(
-            columns={"index": "year", "value": "Gross Agricultural Product ($B)"}
-        )
-        chart = (
-            alt.Chart(data)
-            .mark_area(opacity=0.3)
-            .encode(
-                x="year:T",
-                y=alt.Y("Gross Agricultural Product ($B):Q", stack=None),
-                color="Region:N",
-            )
-        )
-        st.altair_chart(chart, use_container_width=True)
-except Exception as e:
-    st.error(
-        """
-        **This demo requires internet access.**
-        Connection error: %s
-    """
-        % e
-    )
+
+def guess():
+    reset_state = False
+    maximum_number = int(st.number_input("What is your maximum number?",
+                                         value=1000,
+                                         step=1, min_value=10))
+
+    if 'maximum_number' not in st.session_state:
+        st.session_state.maximum_number = maximum_number
+
+    if st.session_state.maximum_number != maximum_number:
+        reset_state = True
+        st.session_state.maximum_number = maximum_number
+
+    if ('random_number' not in st.session_state) or reset_state:
+        reset(maximum_number)
+        st.info("I have chosen a random number. Guess what my number is!")
+
+    random_number = st.session_state.random_number
+
+    guess_number = st.number_input("What is your guess?",
+                                   value=0,
+                                   step=1, max_value=maximum_number)
+    if guess_number > 0:
+        st.session_state.counter += 1
+
+        if guess_number == random_number:
+            st.success(f"Congratulation you guessed correctly in {st.session_state.counter} guesses.")
+            st.balloons()
+            reset(maximum_number)
+        elif guess_number < random_number:
+            st.info(f"Try {st.session_state.counter} - My number is higher.")
+        elif guess_number > random_number:
+            st.warning(f"Try {st.session_state.counter} - My number is lower.")
+
+
+if __name__ == '__main__':
+    guess()
