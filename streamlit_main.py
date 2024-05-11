@@ -1,5 +1,3 @@
-import streamlit as st
-import random
 
 # streamlit community cloud
 import streamlit as st
