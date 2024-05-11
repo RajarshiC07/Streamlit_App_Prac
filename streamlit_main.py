@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 
-
+# streamlit community cloud
 def reset(maximum_number):
     st.session_state.counter = 0
     st.session_state.random_number = random.randint(1, maximum_number)
