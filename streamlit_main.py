@@ -1,66 +1,106 @@
 import streamlit as st
-import numpy as np
+import datetime
+import asyncio
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+from streamlit.runtime.runtime import Runtime
 
 
-# From: https://stackoverflow.com/questions/39922967/python-determine-tic-tac-toe-winner
-def checkRows(board):
-    for row in board:
-        if len(set(row)) == 1:
-            return row[0]
-    return None
+def get_session_id() -> str:
+    ctx = get_script_run_ctx()
+    if ctx is None:
+        raise Exception("Failed to get the thread context")
+    return ctx.session_id
 
 
-def checkDiagonals(board):
-    if len(set([board[i][i] for i in range(len(board))])) == 1:
-        return board[0][0]
-    if len(set([board[i][len(board) - i - 1] for i in range(len(board))])) == 1:
-        return board[0][len(board) - 1]
-    return None
+def get_user_info():
+    ctx = get_script_run_ctx()
+    if ctx is None:
+        raise Exception("Failed to get the thread context")
+    return ctx.user_info
 
 
-def checkWin(board):
-    # transposition to check rows, then columns
-    for newBoard in [board, np.transpose(board)]:
-        result = checkRows(newBoard)
-        if result:
-            return result
-    return checkDiagonals(board)
+def get_all_sessions():
+    all_session_ids = []
+    for session in Runtime.instance()._session_mgr.list_active_sessions():
+        all_session_ids.append(session.session.id)
+    return all_session_ids
+
+current_session_id = get_session_id()
 
 
-def tictactoe():
+def count_online_users():
+    session_infos = get_all_sessions()
+    session_counter = 0
+    for session_info in session_infos:
+        session_counter += 1
+    return session_counter
+
+
+def rerun_all(current_session_id):
+    session_infos = get_all_sessions()
+    for session_info in session_infos:
+        session_info.session.flush_browser_queue()
+        session_info.session.request_rerun()
+
+st.rerun = rerun_all
+
+
+@st.cache_resource()
+def message():
+    ts = datetime.datetime.now().timestamp()
+    return {"1": {"timestamp": ts, "user": "System", "message": "Welcome"}}
+
+
+def print_messages(plh_messages):
+    messages = message()
+    lst = list(messages.items())
+    msg_body = ""
+    for i in reversed(lst):
+        msg_ts = i[1]["timestamp"]
+        msg_datetime = datetime.datetime.fromtimestamp(msg_ts)
+        msg_user = i[1]["user"]
+        msg_text = i[1]["message"]
+        msg_body += f"**{msg_user}** ({msg_datetime})\n\n"
+        msg_body += f"> {msg_text}\n\n"
+    plh_messages.markdown(msg_body)
+
+
+async def watch(plh_messages):
+    while True:
+        messages = message()
+        if len(messages) != st.session_state.msg_count:
+            st.session_state.msg_count = len(messages)
+            print_messages(plh_messages)
+
+        _ = await asyncio.sleep(1)
+
+
+def chat():
+    st.write(f"Online users: **{count_online_users()}**")
+    username = st.text_input("What's your name?")
+    with st.form(key='chat_form', clear_on_submit=True):
+        your_message = st.text_input("What's your message?")
+        btn_send = st.form_submit_button(label='Send')
+
+    st.subheader("Chat Board")
     st.write("")
+    messages = message()
+    st.session_state.msg_count = len(messages)
+    lst = list(messages.items())
 
-    # Initialize state.
-    if "board" not in st.session_state:
-        st.session_state.board = np.full((3, 3), ".", dtype=str)
-        st.session_state.next_player = "X"
-        st.session_state.winner = None
+    last_user = lst[-1][1]["user"]
+    last_message = lst[-1][1]["message"]
+    if (len(username) > 0 and len(your_message) > 0) and (last_user != username or last_message != your_message):
+        ts = datetime.datetime.now().timestamp()
+        messages[len(messages) + 1] = {"timestamp": ts,
+                                       "user": username,
+                                       "message": your_message}
+        # st.rerun(current_session_id)
 
-    # Define callbacks to handle button clicks.
-    def handle_click(i, j):
-        if not st.session_state.winner:
-            st.session_state.board[i, j] = st.session_state.next_player
-            st.session_state.next_player = (
-                "O" if st.session_state.next_player == "X" else "X"
-            )
-            winner = checkWin(st.session_state.board)
-            if winner != ".":
-                st.session_state.winner = winner
-
-    # Show one button for each field.
-    for i, row in enumerate(st.session_state.board):
-        cols = st.columns([0.1, 0.1, 0.1, 0.7])
-        for j, field in enumerate(row):
-            cols[j].button(
-                field,
-                key=f"{i}-{j}",
-                on_click=handle_click,
-                args=(i, j),
-            )
-
-    if st.session_state.winner:
-        st.success(f"Congrats! {st.session_state.winner} won the game! 🎈")
+    plh_messages = st.empty()
+    print_messages(plh_messages)
+    asyncio.run(watch(plh_messages))
 
 
 if __name__ == '__main__':
-    tictactoe()
+    chat()
