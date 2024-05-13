@@ -1,47 +1,106 @@
 import streamlit as st
-import random
+import datetime
+import asyncio
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+from streamlit.runtime.runtime import Runtime
 
 
-def reset(maximum_number):
-    st.session_state.counter = 0
-    st.session_state.random_number = random.randint(1, maximum_number)
+def get_session_id() -> str:
+    ctx = get_script_run_ctx()
+    if ctx is None:
+        raise Exception("Failed to get the thread context")
+    return ctx.session_id
 
 
-def guess():
-    reset_state = False
-    maximum_number = int(st.number_input("What is your maximum number?",
-                                         value=1000,
-                                         step=1, min_value=10))
+def get_user_info():
+    ctx = get_script_run_ctx()
+    if ctx is None:
+        raise Exception("Failed to get the thread context")
+    return ctx.user_info
 
-    if 'maximum_number' not in st.session_state:
-        st.session_state.maximum_number = maximum_number
 
-    if st.session_state.maximum_number != maximum_number:
-        reset_state = True
-        st.session_state.maximum_number = maximum_number
+def get_all_sessions():
+    all_session_ids = []
+    for session in Runtime.instance()._session_mgr.list_active_sessions():
+        all_session_ids.append(session.session.id)
+    return all_session_ids
 
-    if ('random_number' not in st.session_state) or reset_state:
-        reset(maximum_number)
-        st.info("I have chosen a random number. Guess what my number is!")
+current_session_id = get_session_id()
 
-    random_number = st.session_state.random_number
 
-    guess_number = st.number_input("What is your guess?",
-                                   value=0,
-                                   step=1, max_value=maximum_number)
-    if guess_number > 0:
-        st.session_state.counter += 1
+def count_online_users():
+    session_infos = get_all_sessions()
+    session_counter = 0
+    for session_info in session_infos:
+        session_counter += 1
+    return session_counter
 
-        if guess_number == random_number:
-            st.success(f"Congratulation you guessed correctly in {st.session_state.counter} guesses.")
-            st.balloons()
-            reset(maximum_number)
-        elif guess_number < random_number:
-            st.info(f"Try {st.session_state.counter} - My number is higher.")
-        elif guess_number > random_number:
-            st.warning(f"Try {st.session_state.counter} - My number is lower.")
+
+def rerun_all(current_session_id):
+    session_infos = get_all_sessions()
+    for session_info in session_infos:
+        session_info.session.flush_browser_queue()
+        session_info.session.request_rerun()
+
+st.rerun = rerun_all
+
+
+@st.cache_resource()
+def message():
+    ts = datetime.datetime.now().timestamp()
+    return {"1": {"timestamp": ts, "user": "System", "message": "Welcome"}}
+
+
+def print_messages(plh_messages):
+    messages = message()
+    lst = list(messages.items())
+    msg_body = ""
+    for i in reversed(lst):
+        msg_ts = i[1]["timestamp"]
+        msg_datetime = datetime.datetime.fromtimestamp(msg_ts)
+        msg_user = i[1]["user"]
+        msg_text = i[1]["message"]
+        msg_body += f"**{msg_user}** ({msg_datetime})\n\n"
+        msg_body += f"> {msg_text}\n\n"
+    plh_messages.markdown(msg_body)
+
+
+async def watch(plh_messages):
+    while True:
+        messages = message()
+        if len(messages) != st.session_state.msg_count:
+            st.session_state.msg_count = len(messages)
+            print_messages(plh_messages)
+
+        _ = await asyncio.sleep(1)
+
+
+def chat():
+    st.write(f"Online users: **{count_online_users()}**")
+    username = st.text_input("What's your name?")
+    with st.form(key='chat_form', clear_on_submit=True):
+        your_message = st.text_input("What's your message?")
+        btn_send = st.form_submit_button(label='Send')
+
+    st.subheader("Chat Board")
+    st.write("")
+    messages = message()
+    st.session_state.msg_count = len(messages)
+    lst = list(messages.items())
+
+    last_user = lst[-1][1]["user"]
+    last_message = lst[-1][1]["message"]
+    if (len(username) > 0 and len(your_message) > 0) and (last_user != username or last_message != your_message):
+        ts = datetime.datetime.now().timestamp()
+        messages[len(messages) + 1] = {"timestamp": ts,
+                                       "user": username,
+                                       "message": your_message}
+        # st.rerun(current_session_id)
+
+    plh_messages = st.empty()
+    print_messages(plh_messages)
+    asyncio.run(watch(plh_messages))
 
 
 if __name__ == '__main__':
-    guess()
-# changes
+    chat()
