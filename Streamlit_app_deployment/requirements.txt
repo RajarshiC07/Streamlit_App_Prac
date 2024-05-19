@@ -1,2 +1,4 @@
 spacy
 pdfplumber
+time
+io

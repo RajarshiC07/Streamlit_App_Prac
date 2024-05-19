@@ -5,6 +5,8 @@ import pdfplumber
 import time
 import spacy
 
+from spacy.cli import download
+download("en_core_web_md")   
 nlp = spacy.load("en_core_web_md")
 print("changes")
 
