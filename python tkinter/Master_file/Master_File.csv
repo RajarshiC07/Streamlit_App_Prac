@@ -1,0 +1,53 @@
+domicile,asset_class,fund_status,accounting_type,Fund Name,Port_id ,ISIN
+Ireland,Equity,Active,G001,Fund 01,1,ISINVALUE1
+Ireland,Equity,Active,G001,Fund 02,1,ISINVALUE2
+Ireland,Equity,Active,G001,Fund 03,1,ISINVALUE3
+Ireland,Equity,Active,G001,Fund 04,1,ISINVALUE4
+Ireland,Equity,Active,G001,Fund 05,1,ISINVALUE5
+Ireland,Equity,Active,G001,Fund 06,1,ISINVALUE6
+Ireland,Equity,Active,G001,Fund 07,1,ISINVALUE7
+Ireland,Equity,Active,G001,Fund 08,1,ISINVALUE8
+Ireland,Equity,Active,G001,Fund 09,1,ISINVALUE9
+Ireland,Equity,Active,G001,Fund 10,1,ISINVALUE10
+Ireland,Equity,Active,G001,Fund 11,1,ISINVALUE11
+Ireland,Bond,Active,G001,Fund 12,1,ISINVALUE12
+Ireland,Balanced,Active,G001,Fund 13,1,ISINVALUE13
+United States,Equity,Active,G001,Fund 14,1,ISINVALUE14
+United States,Equity,Active,G001,Fund 15,1,ISINVALUE15
+United States,Equity,Active,G001,Fund 16,1,ISINVALUE16
+United States,Equity,Active,G001,Fund 17,1,ISINVALUE17
+United States,Equity,Active,G001,Fund 18,1,ISINVALUE18
+United States,Equity,Active,G001,Fund 19,1,ISINVALUE19
+United States,Equity,Active,G001,Fund 20,1,ISINVALUE20
+United States,Equity,Active,G001,Fund 21,1,ISINVALUE21
+United States,Equity,Active,G001,Fund 22,1,ISINVALUE22
+United States,Equity,Active,G001,Fund 23,1,ISINVALUE23
+United States,Equity,Active,G001,Fund 24,1,ISINVALUE24
+United States,Bond,Active,G001,Fund 25,1,ISINVALUE25
+United States,Balanced,Active,G001,Fund 26,1,ISINVALUE26
+United States,Bond,Active,G001,Fund 27,1,ISINVALUE27
+United Kingdom,Equity,Active,G001,Fund 28,1,ISINVALUE28
+United Kingdom,Equity,Active,G001,Fund 29,1,ISINVALUE29
+United Kingdom,Equity,Active,G001,Fund 30,1,ISINVALUE30
+United Kingdom,Equity,Active,G001,Fund 31,1,ISINVALUE31
+United Kingdom,Equity,Active,G001,Fund 32,1,ISINVALUE32
+United Kingdom,Equity,Active,G001,Fund 33,1,ISINVALUE33
+United Kingdom,Equity,Active,G001,Fund 34,1,ISINVALUE34
+United Kingdom,Equity,Active,G001,Fund 35,1,ISINVALUE35
+United Kingdom,Equity,Active,G001,Fund 36,1,ISINVALUE36
+United Kingdom,Equity,Active,G001,Fund 37,1,ISINVALUE37
+United Kingdom,Equity,Active,G001,Fund 38,1,ISINVALUE38
+United Kingdom,Equity,Active,G001,Fund 39,1,ISINVALUE39
+United Kingdom,Equity,Active,G001,Fund 40,1,ISINVALUE40
+United Kingdom,Equity,Active,G001,Fund 41,1,ISINVALUE41
+Australia,Equity,Active,G001,Fund 42,1,ISINVALUE42
+Australia,Equity,Active,G002,Fund 43,1,ISINVALUE43
+Australia,Equity,Active,G002,Fund 44,1,ISINVALUE44
+Australia,Equity,Active,G002,Fund 45,1,ISINVALUE45
+Australia,Equity,Active,G002,Fund 46,1,ISINVALUE46
+Australia,Bond,Active,G002,Fund 47,1,ISINVALUE47
+Australia,Balanced,Active,G002,Fund 48,1,ISINVALUE48
+Australia,Bond,Active,G002,Fund 49,1,ISINVALUE49
+Australia,Bond,Active,G002,Fund 50,1,ISINVALUE50
+Australia,Bond,Active,G002,Fund 51,1,ISINVALUE51
+Australia,Bond,Prelaunch,G002,Fund 52,1,ISINVALUE52

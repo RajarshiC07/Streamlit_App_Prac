@@ -1,0 +1,7 @@
+{
+    "PREQUEL_PATH":"",
+    "CONFIG_PATHS":{
+        "MASTER_FILE":"Master_file\\Master_File.csv",
+        "REPORT_CONFIG":"Remote_Config\\ReportConfig.json"
+    }
+}

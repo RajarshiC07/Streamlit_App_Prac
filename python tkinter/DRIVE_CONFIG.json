@@ -1,0 +1,1 @@
+{"TEST": {"DRIVE": "F:", "COMMAND": "net set [DRIVE] //10.22.21.44/vgi-ics-test"}, "PROD": {"DRIVE": "", "COMMAND": "net set [DRIVE] //10.22.21.44/vgi-ics-prod"}}

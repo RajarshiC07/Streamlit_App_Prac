@@ -1,0 +1,45 @@
+{
+    "Attrax":{
+        "DATA_SOURCE":"MASTER_FILE",
+        "FILTER1":{
+            
+            "Activity_Status_Code":
+                {    
+                "ATTRIBUTE":"fund_status",
+                "SELECTION_TYPE":"checkbox"
+                },
+            "Market_of_domicile":
+                {
+                "ATTRIBUTE":"domicile",
+                "SELECTION_TYPE":"checkbox",
+                "INCLUDE":["Ireland", "United Kingdom"]
+                },
+            "Asset_Class":{
+                "ATTRIBUTE":"asset_class",
+                "SELECTION_TYPE":"checkbox"
+                }
+        },
+        "FILTER2":{
+            "FundName":{             
+                "ATTRIBUTE":"Fund Name",
+                "SELECTION_TYPE":"multiselect"
+            }
+        }
+    },
+    "Caixa":{
+        "DATA_SOURCE":"MASTER_FILE",
+        "FILTER1":{
+            "AS_OF_DATE":{
+                "DATE_FEED_TYPE":"SAME",
+                "SELECTION_TYPE":"date"
+            }
+        },
+        "FILTER2":{
+            "FundName":{             
+                "ATTRIBUTE":"Fund Name",
+                "SELECTION_TYPE":"multiselect"
+            }
+        }
+        
+    }
+}
